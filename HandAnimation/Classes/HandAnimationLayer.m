@@ -3,7 +3,7 @@
  *  HandAnimation
  *
  *  Created by Kevin Python on 14.06.13.
- *  Copyright __MyCompanyName__ 2013. All rights reserved.
+ *  Copyright EIA-FR 2013. All rights reserved.
  */
 
 #import "HandAnimationLayer.h"

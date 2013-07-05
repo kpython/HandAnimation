@@ -3,7 +3,7 @@
  *  HandAnimation
  *
  *  Created by Kevin Python on 14.06.13.
- *  Copyright __MyCompanyName__ 2013. All rights reserved.
+ *  Copyright EIA-FR 2013. All rights reserved.
  */
 
 #import "HandAnimationScene.h"
@@ -12,9 +12,14 @@
 #import "CC3MeshNode.h"
 #import "CC3Camera.h"
 #import "CC3Light.h"
+#import "CC3NodePODExtensions.h"
+#import "ServerUDPSocketController.h"
 
 
 @implementation HandAnimationScene
+{
+    ServerUDPSocketController *serverUDPSocket;
+}
 
 -(void) dealloc {
 	[super dealloc];
@@ -23,106 +28,175 @@
 /**
  * Constructs the 3D scene.
  *
- * Adds 3D objects to the scene, loading a 3D 'hello, world' message
- * from a POD file, and creating the camera and light programatically.
+ * Adds 3D objects to the scene, loading the hand model from 
+ * the POD file, and creating the camera and light programatically.
  *
- * When adapting this template to your application, remove all of the content
- * of this method, and add your own to construct your 3D model scene.
- *
- * NOTES:
- *
- * 1) To help you find your scene content once it is loaded, the onOpen method below contains
- *    code to automatically move the camera so that it frames the scene. You can remove that
- *    code once you know where you want to place your camera.
- *
- * 2) The POD file used for the 'hello, world' message model is fairly large, because converting a
- *    font to a mesh results in a LOT of triangles. When adapting this template project for your own
- *    application, REMOVE the POD file 'hello-world.pod' from the Resources folder of your project.
  */
 -(void) initializeScene {
 
-	// Create the camera, place it back a bit, and add it to the scene
+	// Create the camera, place it on top of the hand face down, and add it to the scene
 	CC3Camera* cam = [CC3Camera nodeWithName: @"Camera"];
-	cam.location = cc3v( 0.0, 0.0, 6.0 );
+	cam.location = cc3v(0.0, 20.0, 0.0);
+    cam.rotation = cc3v(-90.0, 0.0, 0.0);
 	[self addChild: cam];
 
-	// Create a light, place it back and to the left at a specific
-	// position (not just directional lighting), and add it to the scene
+	// Create a light, place it back, and add it to the scene
 	CC3Light* lamp = [CC3Light nodeWithName: @"Lamp"];
 	lamp.location = cc3v( -2.0, 0.0, 0.0 );
 	lamp.isDirectionalOnly = NO;
 	[cam addChild: lamp];
 
-	// This is the simplest way to load a POD resource file and add the
-	// nodes to the CC3Scene, if no customized resource subclass is needed.
-	[self addContentFromPODFile: @"hello-world.pod"];
-	
-	// Create OpenGL buffers for the vertex arrays to keep things fast and efficient, and to
-	// save memory, release the vertex content in main memory because it is now redundant.
+    // Load the POD ressource file and add it to the scene. This file contain the hand model without any animation. Animation will be added from other POD ressources later.
+	[self addContentFromPODFile: @"Hand_base.pod"];
+    
+    
+    // --- Cocos3D code --- 
 	[self createGLBuffers];
 	[self releaseRedundantContent];
-	
-	// Select an appropriate shader program for each mesh node in this scene now. If this step
-	// is omitted, a shader program will be selected for each mesh node the first time that mesh
-	// node is drawn. Doing it now adds some additional time up front, but avoids potential pauses
-	// as each shader program is loaded as needed the first time it is needed during drawing.
 	[self selectShaderPrograms];
 		
-	// ------------------------------------------
-	
-	// That's it! The scene is now constructed and is good to go.
-	
-	// To help you find your scene content once it is loaded, the onOpen method below contains
-	// code to automatically move the camera so that it frames the scene. You can remove that
-	// code once you know where you want to place your camera.
-	
-	// If you encounter problems displaying your models, you can uncomment one or more of the
-	// following lines to help you troubleshoot. You can also use these features on a single node,
-	// or a structure of nodes. See the CC3Node notes for more explanation of these properties.
-	// Also, the onOpen method below contains additional troubleshooting code you can comment
-	// out to move the camera so that it will display the entire scene automatically.
-	
-	// Displays short descriptive text for each node (including class, node name & tag).
-	// The text is displayed centered on the pivot point (origin) of the node.
-//	self.shouldDrawAllDescriptors = YES;
-	
-	// Displays bounding boxes around those nodes with local content (eg- meshes).
-//	self.shouldDrawAllLocalContentWireframeBoxes = YES;
-	
-	// Displays bounding boxes around all nodes. The bounding box for each node
-	// will encompass its child nodes.
-//	self.shouldDrawAllWireframeBoxes = YES;
-	
 	// If you encounter issues creating and adding nodes, or loading models from
 	// files, the following line is used to log the full structure of the scene.
 	LogInfo(@"The structure of this scene is: %@", [self structureDescription]);
-	
-	// ------------------------------------------
+	// ---- Cocos3D code ---
+    
+    
+    // Retrieve the reference of the Hand mesh
+    self.handNode = (CC3MeshNode*)[self getNodeNamed:@"Hand_base.pod-SoftBody"];
+    
+    // POD files can contain one single animation. The easiest way to have multiple animation on the same model, is to
+    // export a POD file from the 3D editor for each animation. Each animation of each POD file is then added to the
+    // first hand model we loaded before as a different track. Each track can be played independently. 
+    [self.handNode addAnimationFromPODFile:@"Hand_thumb.pod" asTrack:FINGER_THUMB];
+    [self.handNode addAnimationFromPODFile:@"Hand_index.pod" asTrack:FINGER_INDEX];
+    [self.handNode addAnimationFromPODFile:@"Hand_middle.pod" asTrack:FINGER_MIDDLE];
+    [self.handNode addAnimationFromPODFile:@"Hand_ring.pod" asTrack:FINGER_RING];
+    [self.handNode addAnimationFromPODFile:@"Hand_pinky.pod" asTrack:FINGER_PINKY];
+    
+    // Start thread to simulate the animation of the hand. This is only for testing purpose comment this line when using leap motion
+    //[NSThread detachNewThreadSelector:@selector(startRandomPositionThread) toTarget:self withObject:nil];
+    
+    // Create UDP socket and initialize
+    // Set this class as the delegate of the ServerUDPSocketController instance
+    serverUDPSocket = [[ServerUDPSocketController alloc] initWithDelegate:self];
+}
 
-	// And to add some dynamism, we'll animate the 'hello, world' message
-	// using a couple of actions...
-	
-	// Fetch the 'hello, world' object that was loaded from the POD file and start it rotating
-	CC3MeshNode* helloTxt = (CC3MeshNode*)[self getNodeNamed: @"Hello"];
-	CCActionInterval* partialRot = [CC3RotateBy actionWithDuration: 1.0
-														  rotateBy: cc3v(0.0, 30.0, 0.0)];
-	[helloTxt runAction: [CCRepeatForever actionWithAction: partialRot]];
-	
-	// To make things a bit more appealing, set up a repeating up/down cycle to
-	// change the color of the text from the original red to blue, and back again.
-	GLfloat tintTime = 8.0f;
-	ccColor3B startColor = helloTxt.color;
-	ccColor3B endColor = { 50, 0, 200 };
-	CCActionInterval* tintDown = [CCTintTo actionWithDuration: tintTime
-														  red: endColor.r
-														green: endColor.g
-														 blue: endColor.b];
-	CCActionInterval* tintUp = [CCTintTo actionWithDuration: tintTime
-														red: startColor.r
-													  green: startColor.g
-													   blue: startColor.b];
-	 CCActionInterval* tintCycle = [CCSequence actionOne: tintDown two: tintUp];
-	[helloTxt runAction: [CCRepeatForever actionWithAction: tintCycle]];
+#pragma mark Thread for hand animation simulation
+
+#define FORWARD TRUE
+#define BACKWARD FALSE
+#define FINGER_STEP 1
+#define X_MOVE_STEP 0.01
+#define Y_MOVE_STEP 0.01
+#define Z_MOVE_STEP 0.01
+#define REFRESH_TIME 0.01
+/*
+    This thread permit to test the animation of the hand. This thread will:
+        - move the hand in each axis x,y,z
+        - rotate the hand in each axis x,y,z
+        - flex every finger
+ */
+-(void)startRandomPositionThread{
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    // Location
+    CC3Vector currentLocation;
+    BOOL xDirection = FORWARD;
+    BOOL yDirection = FORWARD;
+    BOOL zDirection = FORWARD;
+    
+    // Finger Flexion
+    float fingerFlexion = 0.0;
+    BOOL flexionDirection = FORWARD;
+    int  fingerFlexionCount = 1;
+    
+    while (true) {
+        /* Location
+         This part will simulate the movement of the hand in each 3 axis
+         */
+        currentLocation = self.handNode.location;
+        
+        currentLocation.x += (xDirection == FORWARD) ? +X_MOVE_STEP : -X_MOVE_STEP;
+        if (currentLocation.x > 2.5)
+            xDirection = BACKWARD;
+        if (currentLocation.x < -2.5)
+            xDirection = FORWARD;
+        
+        currentLocation.y += (yDirection == FORWARD) ? +Y_MOVE_STEP : -Y_MOVE_STEP;
+        if (currentLocation.y > 1.0)
+            yDirection = BACKWARD;
+        if (currentLocation.y < -1.0)
+            yDirection = FORWARD;
+        
+        currentLocation.z += (zDirection == FORWARD) ? +Z_MOVE_STEP : -Z_MOVE_STEP;
+        if (currentLocation.z > 2.0)
+            zDirection = BACKWARD;
+        if (currentLocation.z < -2.0)
+            zDirection = FORWARD;
+        
+        [self setHandLocation:currentLocation];
+
+    
+        /* Rotation
+         This part will simulate the rotation of the hand on different axis. 
+         */
+        CC3Vector currentRotation = self.handNode.rotation;
+        currentRotation.x += 0.2;
+        currentRotation.y += 0.2;
+        //currentRotation.z += 0.2;
+        [self setHandRotation:currentRotation];
+    
+        
+        /* Finger flexion
+        This part will simulate the flexion of a finger in the forward.
+        The variable fingerFlexionCount is a counter counting from 0 to 100 and decreasing from 100 to 0 indefinitely
+        This value is scaled to float value from 0.0 to 1.0. This permits to avoid error additioning floating number.
+        */
+        fingerFlexionCount += (flexionDirection == FORWARD) ? +FINGER_STEP : -FINGER_STEP;
+        fingerFlexion = (float)fingerFlexionCount/100;
+        
+        if (fingerFlexionCount == 100)
+            flexionDirection = BACKWARD;
+        if (fingerFlexionCount == 0)
+            flexionDirection = FORWARD;
+        
+        [self setFingerFlexion:FINGER_THUMB withFactor:fingerFlexion];
+        [self setFingerFlexion:FINGER_INDEX withFactor:fingerFlexion];
+        [self setFingerFlexion:FINGER_MIDDLE withFactor:fingerFlexion];
+        [self setFingerFlexion:FINGER_RING withFactor:fingerFlexion];
+        [self setFingerFlexion:FINGER_PINKY withFactor:fingerFlexion];
+
+        [NSThread sleepForTimeInterval:REFRESH_TIME];
+    }
+    [pool release];
+}
+
+-(void)setHandLocation:(CC3Vector)handLocation{
+    [self.handNode setLocation:handLocation];
+    //[self printCurrentLocation];
+}
+
+-(void)setHandRotation:(CC3Vector)handRotation{
+    [self.handNode setRotation:handRotation];
+    //[self printCurrentRotation];
+}
+
+-(void)setFingerFlexion:(HandFinger)finger withFactor:(float)factor{
+    [self.handNode establishAnimationFrameAt:factor onTrack:finger];
+}
+
+-(void)printCurrentLocation{
+    CC3Vector currentLocation = self.handNode.location;
+    NSLog(@"Location X position: %1.2f", currentLocation.x);
+    NSLog(@"Location Y position: %1.2f", currentLocation.y);
+    NSLog(@"Location Z position: %1.2f", currentLocation.z);
+}
+
+-(void)printCurrentRotation{
+    CC3Vector currentRotation = self.handNode.rotation;
+    NSLog(@"Rotation X rotation: %1.2f", currentRotation.x);
+    NSLog(@"Rotation Y rotation: %1.2f", currentRotation.y);
+    NSLog(@"Rotation Z rotation: %1.2f", currentRotation.z);
 }
 
 
@@ -173,7 +247,7 @@
 	// updateAfterTransform: method to track how the camera moves, where it ends up, and
 	// what the camera's clipping distances are, in order to determine how to position
 	// and configure the camera to view your entire scene. Then you can remove this code.
-	[self.activeCamera moveWithDuration: 3.0 toShowAllOf: self withPadding: 0.5f];
+	//[self.activeCamera moveWithDuration: 3.0 toShowAllOf: self withPadding: 0.5f];
 
 	// Uncomment this line to draw the bounding box of the scene.
 //	self.shouldDrawWireframeBox = YES;

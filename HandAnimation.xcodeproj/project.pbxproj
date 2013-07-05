@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7816499D17849FD2004F9CAA /* Hand_base.pod in Resources */ = {isa = PBXBuildFile; fileRef = 7816499C17849FD2004F9CAA /* Hand_base.pod */; };
 		78A47D45176B91DC0037E8C5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78A47D44176B91DC0037E8C5 /* QuartzCore.framework */; };
 		78A47D47176B91DC0037E8C5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78A47D46176B91DC0037E8C5 /* OpenGLES.framework */; };
 		78A47D49176B91DC0037E8C5 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78A47D48176B91DC0037E8C5 /* OpenAL.framework */; };
@@ -266,10 +267,17 @@
 		78A4807C176B91E10037E8C5 /* HandAnimationAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 78A4807B176B91E10037E8C5 /* HandAnimationAppDelegate.m */; };
 		78A4807F176B91E10037E8C5 /* HandAnimationLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 78A4807E176B91E10037E8C5 /* HandAnimationLayer.m */; };
 		78A48082176B91E10037E8C5 /* HandAnimationScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 78A48081176B91E10037E8C5 /* HandAnimationScene.m */; };
-		78A48084176B91E10037E8C5 /* hello-world.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78A48083176B91E10037E8C5 /* hello-world.pod */; };
+		78D8616117823DD800B89C81 /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = 78D8616017823DD800B89C81 /* GCDAsyncUdpSocket.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		78D8616817824BAD00B89C81 /* ServerUDPSocketController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78D8616717824BAD00B89C81 /* ServerUDPSocketController.m */; };
+		78FF6E5517720E7200D3899B /* Hand_index.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78FF6E5317720E7200D3899B /* Hand_index.pod */; };
+		78FF6E5617720E7200D3899B /* Hand_middle.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78FF6E5417720E7200D3899B /* Hand_middle.pod */; };
+		78FF6E5A1772354D00D3899B /* Hand_pinky.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78FF6E571772354D00D3899B /* Hand_pinky.pod */; };
+		78FF6E5B1772354D00D3899B /* Hand_ring.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78FF6E581772354D00D3899B /* Hand_ring.pod */; };
+		78FF6E5C1772354D00D3899B /* Hand_thumb.pod in Resources */ = {isa = PBXBuildFile; fileRef = 78FF6E591772354D00D3899B /* Hand_thumb.pod */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7816499C17849FD2004F9CAA /* Hand_base.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_base.pod; sourceTree = "<group>"; };
 		78A47D41176B91DC0037E8C5 /* HandAnimation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAnimation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78A47D44176B91DC0037E8C5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		78A47D46176B91DC0037E8C5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -801,7 +809,16 @@
 		78A4807E176B91E10037E8C5 /* HandAnimationLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HandAnimationLayer.m; path = Classes/HandAnimationLayer.m; sourceTree = "<group>"; };
 		78A48080176B91E10037E8C5 /* HandAnimationScene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HandAnimationScene.h; path = Classes/HandAnimationScene.h; sourceTree = "<group>"; };
 		78A48081176B91E10037E8C5 /* HandAnimationScene.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = HandAnimationScene.m; path = Classes/HandAnimationScene.m; sourceTree = "<group>"; };
-		78A48083176B91E10037E8C5 /* hello-world.pod */ = {isa = PBXFileReference; lastKnownFileType = file; name = "hello-world.pod"; path = "Resources/hello-world.pod"; sourceTree = "<group>"; };
+		78A4808A176B92DB0037E8C5 /* HandLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandLibrary.h; sourceTree = "<group>"; };
+		78D8615F17823DD800B89C81 /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
+		78D8616017823DD800B89C81 /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
+		78D8616617824BAD00B89C81 /* ServerUDPSocketController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerUDPSocketController.h; sourceTree = "<group>"; };
+		78D8616717824BAD00B89C81 /* ServerUDPSocketController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerUDPSocketController.m; sourceTree = "<group>"; };
+		78FF6E5317720E7200D3899B /* Hand_index.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_index.pod; sourceTree = "<group>"; };
+		78FF6E5417720E7200D3899B /* Hand_middle.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_middle.pod; sourceTree = "<group>"; };
+		78FF6E571772354D00D3899B /* Hand_pinky.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_pinky.pod; sourceTree = "<group>"; };
+		78FF6E581772354D00D3899B /* Hand_ring.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_ring.pod; sourceTree = "<group>"; };
+		78FF6E591772354D00D3899B /* Hand_thumb.pod */ = {isa = PBXFileReference; lastKnownFileType = file; path = Hand_thumb.pod; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -861,6 +878,7 @@
 			isa = PBXGroup;
 			children = (
 				78A48074176B91E10037E8C5 /* README! */,
+				78D8616217823DDE00B89C81 /* UDP */,
 				78A47D57176B91DC0037E8C5 /* Resources */,
 				78A47D71176B91DC0037E8C5 /* libs */,
 				78A47ECA176B91DD0037E8C5 /* cocos3d */,
@@ -886,7 +904,12 @@
 				78A47D6C176B91DC0037E8C5 /* Icon@2x.png */,
 				78A47D6E176B91DC0037E8C5 /* Info.plist */,
 				78A47D6F176B91DC0037E8C5 /* iTunesArtwork */,
-				78A48083176B91E10037E8C5 /* hello-world.pod */,
+				7816499C17849FD2004F9CAA /* Hand_base.pod */,
+				78FF6E5317720E7200D3899B /* Hand_index.pod */,
+				78FF6E5417720E7200D3899B /* Hand_middle.pod */,
+				78FF6E571772354D00D3899B /* Hand_pinky.pod */,
+				78FF6E581772354D00D3899B /* Hand_ring.pod */,
+				78FF6E591772354D00D3899B /* Hand_thumb.pod */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1710,8 +1733,20 @@
 				78A4807E176B91E10037E8C5 /* HandAnimationLayer.m */,
 				78A48080176B91E10037E8C5 /* HandAnimationScene.h */,
 				78A48081176B91E10037E8C5 /* HandAnimationScene.m */,
+				78A4808A176B92DB0037E8C5 /* HandLibrary.h */,
+				78D8616617824BAD00B89C81 /* ServerUDPSocketController.h */,
+				78D8616717824BAD00B89C81 /* ServerUDPSocketController.m */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		78D8616217823DDE00B89C81 /* UDP */ = {
+			isa = PBXGroup;
+			children = (
+				78D8615F17823DD800B89C81 /* GCDAsyncUdpSocket.h */,
+				78D8616017823DD800B89C81 /* GCDAsyncUdpSocket.m */,
+			);
+			name = UDP;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1796,7 +1831,12 @@
 				78A4806F176B91E10037E8C5 /* CC3SingleTextureReflect.fsh in Resources */,
 				78A48071176B91E10037E8C5 /* CC3SingleTextureReflectAlphaTest.fsh in Resources */,
 				78A48073176B91E10037E8C5 /* CC3TexturableMaterial.vsh in Resources */,
-				78A48084176B91E10037E8C5 /* hello-world.pod in Resources */,
+				78FF6E5517720E7200D3899B /* Hand_index.pod in Resources */,
+				78FF6E5617720E7200D3899B /* Hand_middle.pod in Resources */,
+				78FF6E5A1772354D00D3899B /* Hand_pinky.pod in Resources */,
+				78FF6E5B1772354D00D3899B /* Hand_ring.pod in Resources */,
+				78FF6E5C1772354D00D3899B /* Hand_thumb.pod in Resources */,
+				7816499D17849FD2004F9CAA /* Hand_base.pod in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2025,6 +2065,8 @@
 				78A4807C176B91E10037E8C5 /* HandAnimationAppDelegate.m in Sources */,
 				78A4807F176B91E10037E8C5 /* HandAnimationLayer.m in Sources */,
 				78A48082176B91E10037E8C5 /* HandAnimationScene.m in Sources */,
+				78D8616117823DD800B89C81 /* GCDAsyncUdpSocket.m in Sources */,
+				78D8616817824BAD00B89C81 /* ServerUDPSocketController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2053,7 +2095,7 @@
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lz",
@@ -2082,7 +2124,7 @@
 				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 3.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-all_load",
@@ -2109,6 +2151,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2127,6 +2170,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				VALIDATE_PRODUCT = YES;
 				WRAPPER_EXTENSION = app;
 			};
@@ -2151,6 +2195,7 @@
 				78A48089176B91E10037E8C5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

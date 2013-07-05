@@ -3,7 +3,7 @@
  *  HandAnimation
  *
  *  Created by Kevin Python on 14.06.13.
- *  Copyright __MyCompanyName__ 2013. All rights reserved.
+ *  Copyright EIA-FR 2013. All rights reserved.
  */
 
 #import "HandAnimationAppDelegate.h"
@@ -121,10 +121,13 @@
 	
 	// Create the customized 3D scene and attach it to the layer.
 	// Could also just create this inside the customer layer.
-	cc3Layer.cc3Scene = [HandAnimationScene scene];
-	
+    HandAnimationScene *currentScene = [HandAnimationScene scene];
+	cc3Layer.cc3Scene = currentScene;
+    
 	// Assign to a generic variable so we can uncomment options below to play with the capabilities
 	CC3ControllableLayer* mainLayer = cc3Layer;
+
+
 	
 	// The 3D layer can run either directly in the scene, or it can run as a smaller "sub-window"
 	// within any standard CCLayer. So you can have a mostly 2D window, with a smaller 3D window
