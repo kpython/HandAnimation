@@ -36,7 +36,7 @@
 
 	// Create the camera, place it on top of the hand face down, and add it to the scene
 	CC3Camera* cam = [CC3Camera nodeWithName: @"Camera"];
-	cam.location = cc3v(0.0, 20.0, 0.0);
+	cam.location = cc3v(0.0, 15.0, 0.0);
     cam.rotation = cc3v(-90.0, 0.0, 0.0);
 	[self addChild: cam];
 
@@ -47,7 +47,7 @@
 	[cam addChild: lamp];
 
     // Load the POD ressource file and add it to the scene. This file contain the hand model without any animation. Animation will be added from other POD ressources later.
-	[self addContentFromPODFile: @"Hand_base.pod"];
+	[self addContentFromPODFile: @"Hand_withoutAnim.pod"];
     
     
     // --- Cocos3D code --- 
@@ -62,7 +62,7 @@
     
     
     // Retrieve the reference of the Hand mesh
-    self.handNode = (CC3MeshNode*)[self getNodeNamed:@"Hand_base.pod-SoftBody"];
+    self.handNode = (CC3MeshNode*)[self getNodeNamed:@"Hand_withoutAnim.pod-SoftBody"];
     
     // POD files can contain one single animation. The easiest way to have multiple animation on the same model, is to
     // export a POD file from the 3D editor for each animation. Each animation of each POD file is then added to the

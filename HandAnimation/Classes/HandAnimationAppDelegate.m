@@ -2,8 +2,23 @@
  *  HandAnimationAppDelegate.m
  *  HandAnimation
  *
- *  Created by Kevin Python on 14.06.13.
- *  Copyright EIA-FR 2013. All rights reserved.
+ * Hand Animation on iOS
+ * ----------------------
+ * The goal of this project is to animate a 3D hand model on iOS using coordinate received
+ * from the Leap Motion device. Coordinates received from the Leap Motion device are received
+ * on a java program, formated in JSON and transmitted using a UDP socket. This UDP packet includes:
+ *  - Hand position
+ *  - Hand rotation
+ *  - Fingers flexion
+ *
+ * The iOS program receives coordinates through UDP packets and animate the 3d hand model according decoded
+ * informations.
+ *
+ * @author Kevin Python
+ * @version 1.0
+ * @since 14.06.13
+ * Copyright EIA-FR 2013. All rights reserved.
+ *
  */
 
 #import "HandAnimationAppDelegate.h"

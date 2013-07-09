@@ -97,23 +97,13 @@ withFilterContext:(id)filterContext
         
         NSDictionary* palmInfo = [hands objectAtIndex:0];
         
-        NSArray* palmPostion = [palmInfo objectForKey:@"palmPosition"];
+        NSArray* palmPosition = [palmInfo objectForKey:@"palmPosition"];
         NSArray* palmRotation = [palmInfo objectForKey:@"palmRotation"];
+        NSArray* fingersFlexion = [palmInfo objectForKey:@"fingersFlexion"];     
         
-        float xLoc = [[palmPostion objectAtIndex:0] floatValue];
-        float yLoc = [[palmPostion objectAtIndex:1] floatValue];
-        float zLoc = [[palmPostion objectAtIndex:2] floatValue];
-        
-        float xRot = [[palmRotation objectAtIndex:0] floatValue];
-        float yRot = [[palmRotation objectAtIndex:1] floatValue];
-        float zRot = [[palmRotation objectAtIndex:2] floatValue];
-        
-        
-        CC3Vector handLocation = cc3v(xLoc/25.0,yLoc/25.0,zLoc/25.0);
-        // Y axis is modified due to different convention of axis rotation
-        CC3Vector handRotation = cc3v(xRot,-yRot,zRot);
-        [self udpateHandPosition:handLocation];
-        [self udpateHandRotation:handRotation];
+        [self udpateHandPosition:palmPosition];
+        [self udpateHandRotation:palmRotation];
+        [self updateFingersFlexion:fingersFlexion];
                 
         
     } else {
@@ -121,17 +111,42 @@ withFilterContext:(id)filterContext
     }
 }
 
--(void)udpateHandPosition:(CC3Vector)handLocation
+-(void)udpateHandPosition:(NSArray*)palmPosition
 {
     if ([self.delegate respondsToSelector:@selector(setHandLocation:)]){
+        float xLoc = [[palmPosition objectAtIndex:0] floatValue];
+        float yLoc = [[palmPosition objectAtIndex:1] floatValue];
+        float zLoc = [[palmPosition objectAtIndex:2] floatValue];
+        CC3Vector handLocation = cc3v(xLoc/25.0,yLoc/25.0,zLoc/25.0);
         [self.delegate setHandLocation:handLocation];
     }
 }
 
--(void)udpateHandRotation:(CC3Vector)handRotation
+-(void)udpateHandRotation:(NSArray*)palmRotation
 {
     if ([self.delegate respondsToSelector:@selector(setHandRotation:)]){
+        float xRot = [[palmRotation objectAtIndex:0] floatValue];
+        float yRot = [[palmRotation objectAtIndex:1] floatValue];
+        float zRot = [[palmRotation objectAtIndex:2] floatValue];
+        // Y axis is modified due to different convention of axis rotation
+        CC3Vector handRotation = cc3v(xRot,-yRot,zRot);
         [self.delegate setHandRotation:handRotation];
+    }
+}
+
+-(void)updateFingersFlexion:(NSArray*)fingersFlexion{
+    if ([self.delegate respondsToSelector:@selector(setFingerFlexion:withFactor:)]){
+        float thumbFlexion = [[fingersFlexion objectAtIndex:0] floatValue];
+        float indexFlexion = [[fingersFlexion objectAtIndex:1] floatValue];
+        float middleFlexion = [[fingersFlexion objectAtIndex:2] floatValue];
+        float ringFlexion = [[fingersFlexion objectAtIndex:3] floatValue];
+        float pinkyFlexion = [[fingersFlexion objectAtIndex:4] floatValue];
+        
+        [self.delegate setFingerFlexion:FINGER_THUMB withFactor:thumbFlexion];
+        [self.delegate setFingerFlexion:FINGER_INDEX withFactor:indexFlexion];
+        [self.delegate setFingerFlexion:FINGER_MIDDLE withFactor:middleFlexion];
+        [self.delegate setFingerFlexion:FINGER_RING withFactor:ringFlexion];
+        [self.delegate setFingerFlexion:FINGER_PINKY withFactor:pinkyFlexion];
     }
 }
 
