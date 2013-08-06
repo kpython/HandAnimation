@@ -3,7 +3,8 @@
  *  HandAnimation
  *
  *  Created by Kevin Python on 14.06.13.
- *  Copyright EIA-FR 2013. All rights reserved.
+ *  Copyright 2013 College of Engineering and Architecture of Fribourg & Norhteastern University, Boston
+ *  All rights reserved
  */
 
 #import "HandAnimationScene.h"
@@ -13,12 +14,15 @@
 #import "CC3Camera.h"
 #import "CC3Light.h"
 #import "CC3NodePODExtensions.h"
-#import "ServerUDPSocketController.h"
+#import "ClientSocketController.h"
+#import "Recorder.h"
+#import "Player.h"
 
 
 @implementation HandAnimationScene
 {
-    ServerUDPSocketController *serverUDPSocket;
+    FrameParser *frameParser;
+    ClientSocketController *socketController;
 }
 
 -(void) dealloc {
@@ -76,10 +80,15 @@
     // Start thread to simulate the animation of the hand. This is only for testing purpose comment this line when using leap motion
     //[NSThread detachNewThreadSelector:@selector(startRandomPositionThread) toTarget:self withObject:nil];
     
-    // Create UDP socket and initialize
-    // Set this class as the delegate of the ServerUDPSocketController instance
-    serverUDPSocket = [[ServerUDPSocketController alloc] initWithDelegate:self];
+    // Initialize socket, recorder player and the frame parser
+    socketController = [[ClientSocketController alloc] init];
+    [[Recorder alloc] init];
+    [[Player alloc] init];
+    
+    frameParser = [FrameParser sharedInstance];
+    frameParser.delegate = self;
 }
+
 
 #pragma mark Thread for hand animation simulation
 
@@ -96,7 +105,7 @@
         - rotate the hand in each axis x,y,z
         - flex every finger
  */
--(void)startRandomPositionThread{
+-(void)startAnimationSimulationThread{
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     // Location
@@ -173,16 +182,21 @@
 
 -(void)setHandLocation:(CC3Vector)handLocation{
     [self.handNode setLocation:handLocation];
-    //[self printCurrentLocation];
 }
 
 -(void)setHandRotation:(CC3Vector)handRotation{
     [self.handNode setRotation:handRotation];
-    //[self printCurrentRotation];
 }
 
 -(void)setFingerFlexion:(HandFinger)finger withFactor:(float)factor{
-    [self.handNode establishAnimationFrameAt:factor onTrack:finger];
+    if (factor) {
+        if (factor < 0.0) {
+            factor = 0.0;
+        }else if (factor > 1.0){
+            factor = 1.0;
+        }
+        [self.handNode establishAnimationFrameAt:factor onTrack:finger];
+    }
 }
 
 -(void)printCurrentLocation{

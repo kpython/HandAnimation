@@ -1,5 +1,5 @@
 /**
- *  HandAnimationLayer.h
+ *  Player.h
  *  HandAnimation
  *
  *  Created by Kevin Python on 14.06.13.
@@ -7,10 +7,15 @@
  *  All rights reserved
  */
 
+#import <Foundation/Foundation.h>
 
-#import "CC3Layer.h"
+@interface Player : NSObject
 
-/** A application-specific CC3Layer subclass. */
-@interface HandAnimationLayer : CC3Layer
++(Player *) sharedInstance;
+
+- (void)startPlaying;
+- (void)stopPlaying;
+
+@property (nonatomic) BOOL isPlaying;
 
 @end

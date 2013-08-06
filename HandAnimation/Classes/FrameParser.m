@@ -1,39 +1,37 @@
-//
-//  ServerUDPSocketController.m
-//  HandAnimation
-//
-//  Created by Kevin Python on 01.07.13.
-//
-//
+/**
+ *  FrameParser.m
+ *  HandAnimation
+ *
+ *  Created by Kevin Python on 14.06.13.
+ *  Copyright 2013 College of Engineering and Architecture of Fribourg & Norhteastern University, Boston
+ *  All rights reserved
+ */
 
-#import "ServerUDPSocketController.h"
-#import "GCDAsyncUdpSocket.h"
+#import "FrameParser.h"
 
+@implementation FrameParser
 
+static FrameParser *sharedInstance = nil;
 
-@implementation ServerUDPSocketController
-
-GCDAsyncUdpSocket *udpSocket;
-
-
-#define UDP_LOCAL_PORT 7777
-
-
-- (void)logError:(NSString *)msg
-{
-    NSLog(@"ERROR : %@",msg);
++(id)sharedInstance{
+	@synchronized(self) {
+		if (!sharedInstance) {
+			sharedInstance=[[self alloc] init];
+		}
+	}
+	return sharedInstance;
 }
 
-- (void)logInfo:(NSString *)msg
++ (id)allocWithZone:(NSZone *)zone
 {
-    NSLog(@"%@",msg);
-}
-
-- (void)logMessage:(NSString *)msg
-{
-//    NSDate *date = [NSDate date];
-//    NSDateFormatter *formater = [[NSDateFormatter alloc] init];
-//    [formater setDateFormat:@"dd-MM-yyyy HH:mm:ss"];
+	@synchronized(self) {
+		if (sharedInstance == nil) {
+			sharedInstance = [super allocWithZone:zone];
+			return sharedInstance;
+		}
+	}
+    
+	return nil;
 }
 
 -(id) initWithDelegate:(id<UpdateHandModel>)delegate
@@ -42,82 +40,60 @@ GCDAsyncUdpSocket *udpSocket;
     if (self != nil)
     {
         self.delegate = delegate;
-        [self initializeUDPSocket];
     }
     return self;
 }
 
-- (void)initializeUDPSocket
-{
-    udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    NSError *error = nil;
-    if (![udpSocket bindToPort:UDP_LOCAL_PORT error:&error]) {
-        [self logError:[error localizedDescription]];
-        return;
-    }
-    
-    if (![udpSocket beginReceiving:&error]){
-        [udpSocket close];
-        [self logError:[error localizedDescription]];
-        return;
-    }
-    NSLog(@"Socket creation successfull");
-}
 
-- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
-      fromAddress:(NSData *)address
-withFilterContext:(id)filterContext
-{
-    // Print received frame
-    NSString *msg = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    if (msg){
-        NSString *host = nil;
-        uint16_t port = 0;
-        [GCDAsyncUdpSocket getHost:&host port:&port fromAddress:address];
-        [self logMessage:msg];
-    } else
-    {
-        [self logError:@"Error converting received data into UTF-8 String"];
-    }
-    
-    
+-(void) parseFrame:(NSData*)data{
     // Parse received frame
     NSError* error = nil;
-    
     if (data) {
         NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data
                                                              options:kNilOptions
                                                                error:&error];
         
-        int frameID = [[json objectForKey:@"FrameID"] integerValue];
-        int timeStamp = [[json objectForKey:@"timestamp"] integerValue];
+        [self readJSONFrame:json];
         
-        
+    }
+    else {
+        NSLog(@"Error parsing received frame: %@", [error userInfo]);
+    }
+}
+
+-(void) readJSONFrame: (NSDictionary*)json{
+    if (json) {
         NSArray* hands = [json objectForKey:@"hands"];
         
         NSDictionary* palmInfo = [hands objectAtIndex:0];
         
         NSArray* palmPosition = [palmInfo objectForKey:@"palmPosition"];
         NSArray* palmRotation = [palmInfo objectForKey:@"palmRotation"];
-        NSArray* fingersFlexion = [palmInfo objectForKey:@"fingersFlexion"];     
+        NSArray* fingersFlexion = [palmInfo objectForKey:@"fingersFlexion"];
         
-        [self udpateHandPosition:palmPosition];
-        [self udpateHandRotation:palmRotation];
-        [self updateFingersFlexion:fingersFlexion];
-                
+        if (palmPosition)
+            [self udpateHandPosition:palmPosition];
         
-    } else {
-        // Handle Error
+        if (palmRotation)
+            [self udpateHandRotation:palmRotation];
+        
+        if (fingersFlexion) 
+            [self updateFingersFlexion:fingersFlexion];
+        
     }
 }
 
+
+// The correspondance between the real position of the hand and the position of the hand
+// on the screen is scalled according a decreasing factor.
+#define SCREEN_REALITY_FACTOR   25.0
 -(void)udpateHandPosition:(NSArray*)palmPosition
 {
     if ([self.delegate respondsToSelector:@selector(setHandLocation:)]){
-        float xLoc = [[palmPosition objectAtIndex:0] floatValue];
-        float yLoc = [[palmPosition objectAtIndex:1] floatValue];
-        float zLoc = [[palmPosition objectAtIndex:2] floatValue];
-        CC3Vector handLocation = cc3v(xLoc/25.0,yLoc/25.0,zLoc/25.0);
+        float xLoc = [[palmPosition objectAtIndex:0] floatValue] / SCREEN_REALITY_FACTOR;
+        float yLoc = [[palmPosition objectAtIndex:1] floatValue] / SCREEN_REALITY_FACTOR;
+        float zLoc = [[palmPosition objectAtIndex:2] floatValue] / SCREEN_REALITY_FACTOR;
+        CC3Vector handLocation = cc3v(xLoc,yLoc,zLoc);
         [self.delegate setHandLocation:handLocation];
     }
 }
@@ -149,5 +125,6 @@ withFilterContext:(id)filterContext
         [self.delegate setFingerFlexion:FINGER_PINKY withFactor:pinkyFlexion];
     }
 }
+
 
 @end

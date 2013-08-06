@@ -2,23 +2,12 @@
  *  HandAnimationAppDelegate.m
  *  HandAnimation
  *
- * Hand Animation on iOS
- * ----------------------
- * The goal of this project is to animate a 3D hand model on iOS using coordinate received
- * from the Leap Motion device. Coordinates received from the Leap Motion device are received
- * on a java program, formated in JSON and transmitted using a UDP socket. This UDP packet includes:
- *  - Hand position
- *  - Hand rotation
- *  - Fingers flexion
- *
- * The iOS program receives coordinates through UDP packets and animate the 3d hand model according decoded
- * informations.
- *
  * @author Kevin Python
  * @version 1.0
  * @since 14.06.13
- * Copyright EIA-FR 2013. All rights reserved.
  *
+ * Copyright 2013 College of Engineering and Architecture of Fribourg & Norhteastern University, Boston
+ * All rights reserved
  */
 
 #import "HandAnimationAppDelegate.h"
@@ -72,7 +61,8 @@
 	CCDirector *director = CCDirector.sharedDirector;
 	director.runLoopCommon = YES;		// Improves display link integration with UIKit
 	director.animationInterval = (1.0f / kAnimationFrameRate);
-	director.displayFPS = YES;
+    // Set displayFPS to YES to display information about the frame rate on the bottom left
+	director.displayFPS = NO;
 	director.openGLView = _viewController.view;
 	
 	// Enables High Res mode on Retina Displays and maintains low res on all other devices
@@ -124,11 +114,6 @@
 	_window.rootViewController = _viewController;
 	[_window makeKeyAndVisible];
 	
-	// Set to YES for Augmented Reality 3D overlay on device camera.
-	// This must be done after the window is made visible!
-//	_viewController.isOverlayingDeviceCamera = YES;
-
-	
 	// ******** START OF COCOS3D SETUP CODE... ********
 	
 	// Create the customized CC3Layer that supports 3D rendering.
@@ -141,26 +126,12 @@
     
 	// Assign to a generic variable so we can uncomment options below to play with the capabilities
 	CC3ControllableLayer* mainLayer = cc3Layer;
-
-
-	
-	// The 3D layer can run either directly in the scene, or it can run as a smaller "sub-window"
-	// within any standard CCLayer. So you can have a mostly 2D window, with a smaller 3D window
-	// embedded in it. To experiment with this smaller embedded 3D window, uncomment the following lines:
-//	CGSize winSize = CCDirector.sharedDirector.winSize;
-//	cc3Layer.position = ccp(30.0, 30.0);
-//	cc3Layer.contentSize = CGSizeMake(winSize.width - 100.0, winSize.width - 40.0);
-//	cc3Layer.alignContentSizeWithDeviceOrientation = YES;
-//	mainLayer = [CC3ControllableLayer node];
-//	[mainLayer addChild: cc3Layer];
-	
-	// A smaller 3D layer can even be moved around on the screen dyanmically. To see this in action,
-	// uncomment the lines above as described, and also uncomment the following two lines.
-//	cc3Layer.position = ccp(0.0, 0.0);
-//	[cc3Layer runAction: [CCMoveTo actionWithDuration: 15.0 position: ccp(500.0, 250.0)]];
 	
 	// Attach the layer to the controller and run a scene with it.
 	[_viewController runSceneOnNode: mainLayer];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(enableCameraOverlay:) name:@"enableCameraOverlay" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(disableCameraOverlay:) name:@"disableCameraOverlay" object:nil];
 }
 
 /** Pause the cocos3d/cocos2d action. */
@@ -172,17 +143,6 @@
 -(void) resumeApp { [CCDirector.sharedDirector resume]; }
 
 -(void) applicationDidBecomeActive: (UIApplication*) application {
-	
-	// Workaround to fix the issue of drop to 40fps on iOS4.X on app resume.
-	// Adds short delay before resuming the app.
-	[NSTimer scheduledTimerWithTimeInterval: 0.5f
-									 target: self
-								   selector: @selector(resumeApp)
-								   userInfo: nil
-									repeats: NO];
-	
-	// If dropping to 40fps is not an issue, remove above, and uncomment the following to avoid delay.
-//	[self resumeApp];
 }
 
 -(void) applicationDidReceiveMemoryWarning: (UIApplication*) application {
@@ -191,6 +151,7 @@
 
 -(void) applicationDidEnterBackground: (UIApplication*) application {
 	[CCDirector.sharedDirector stopAnimation];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"closeConnection" object:self];
 }
 
 -(void) applicationWillEnterForeground: (UIApplication*) application {
@@ -204,6 +165,16 @@
 
 -(void) applicationSignificantTimeChange: (UIApplication*) application {
 	[CCDirector.sharedDirector setNextDeltaTimeZero: YES];
+}
+
+- (void)enableCameraOverlay:(NSNotification*)notification
+{
+    _viewController.isOverlayingDeviceCamera = YES;
+}
+
+- (void)disableCameraOverlay:(NSNotification*)notification
+{
+    _viewController.isOverlayingDeviceCamera = NO;
 }
 
 @end
