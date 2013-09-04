@@ -100,6 +100,8 @@
 #endif
 
 -(void) applicationDidFinishLaunching: (UIApplication*) application {
+    // Increase launch screen time
+    sleep(2);
 	
 	// Default texture format for PNG/BMP/TIFF/JPEG/GIF images.
 	// It can be RGBA8888, RGBA4444, RGB5_A1, RGB565. You can change anytime.
@@ -151,7 +153,7 @@
 
 -(void) applicationDidEnterBackground: (UIApplication*) application {
 	[CCDirector.sharedDirector stopAnimation];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"closeConnection" object:self];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"closeConnection" object:self];
 }
 
 -(void) applicationWillEnterForeground: (UIApplication*) application {

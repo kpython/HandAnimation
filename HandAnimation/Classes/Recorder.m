@@ -80,7 +80,9 @@ static Recorder *sharedInstance = nil;
     fileHandle = [NSFileHandle fileHandleForWritingAtPath:fileName];
     
     self.isRecording = YES;
-    counter = 10;
+    
+    // Max record time ~1min
+    counter = 6000;
 }
 
 - (void)stopRecord{
@@ -124,6 +126,11 @@ static Recorder *sharedInstance = nil;
         
         // write the data to the end of the file
         [fileHandle writeData:textData];
+        
+        // Stop recording after 1min to avoid using to much space
+        if (--counter <= 0){
+            [self stopRecord];
+        }
     }
 }
 

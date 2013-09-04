@@ -25,7 +25,7 @@
     self = [super init];
     if (self){
         [self initializeUDPSocket];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeConnection:) name:@"closeConnection" object:nil];
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeConnection:) name:@"closeConnection" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(connect:) name:@"connect" object:nil];
     }
     return self;
@@ -222,10 +222,10 @@ withFilterContext:(id)filterContext
     }
 }
 
-- (void)closeConnection:(NSNotification*)info{
-    NSLog(@"Connection closed");
-    [asyncSocket disconnect];
-}
+//- (void)closeConnection:(NSNotification*)info{
+//    NSLog(@"Connection closed");
+//    [asyncSocket disconnect];
+//}
 
 - (void)connect:(NSNotification*)info{
     [self browseBonjourServices];
